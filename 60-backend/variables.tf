@@ -13,3 +13,7 @@ variable "common_tags" {
     Terraform   = "true"
   }
 }
+
+variable "domain_name" {
+  default = "daws82s.space"
+}
