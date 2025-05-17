@@ -53,7 +53,7 @@ module "app_alb_sg" {
   source         = "git::https://github.com/balaguru-20/terraform-aws-securitygroup.git?ref=main"
   project_name   = var.project_name
   environment    = var.environment
-  sg_name        = "app_alb_sg"
+  sg_name        = "app_alb"
   sg_description = "Created for backend ALB instances in expense dev"
   vpc_id         = data.aws_ssm_parameter.vpc_id.value
   common_tags    = var.common_tags
@@ -199,4 +199,34 @@ resource "aws_security_group_rule" "web_alb_https" {
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = module.web_alb_sg.sg_id
+}
+
+#app alb should accepting traffic from frontend on port no:80
+resource "aws_security_group_rule" "app_alb_frontend" {
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = module.frontend_sg.sg_id
+  security_group_id        = module.app_alb_sg.sg_id
+}
+
+#rontend should accepting traffic from web alb on port no:80
+resource "aws_security_group_rule" "frontend_web_alb" {
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = module.web_alb_sg.sg_id
+  security_group_id        = module.frontend_sg.sg_id
+}
+
+#usaually you should configure using private ip only
+resource "aws_security_group_rule" "frontend_public" {
+  type              = "ingress"
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = module.frontend_sg.sg_id
 }
