@@ -53,7 +53,7 @@ module "app_alb_sg" {
   source         = "git::https://github.com/balaguru-20/terraform-aws-securitygroup.git?ref=main"
   project_name   = var.project_name
   environment    = var.environment
-  sg_name        = "app_alb"
+  sg_name        = "app_alb_sg"
   sg_description = "Created for backend ALB instances in expense dev"
   vpc_id         = data.aws_ssm_parameter.vpc_id.value
   common_tags    = var.common_tags
