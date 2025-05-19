@@ -36,7 +36,7 @@ resource "aws_lb_listener" "https" {
 
 resource "aws_route53_record" "web_alb" {
   zone_id = var.zone_id
-  name    = "*.${var.domain_name}"
+  name    = "expense-${var.environment}.${var.domain_name}"
   type    = "A"
 
   #These are ALB DNS name and zone information

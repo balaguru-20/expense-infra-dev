@@ -65,10 +65,11 @@ resource "null_resource" "frontend_delete" {
 }
 
 resource "aws_lb_target_group" "frontend" {
-  name     = local.resource_name
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = local.vpc_id
+  name                 = local.resource_name
+  port                 = 80
+  protocol             = "HTTP"
+  vpc_id               = local.vpc_id
+  deregistration_delay = 60
 
   health_check {
     healthy_threshold   = 2
@@ -128,7 +129,7 @@ resource "aws_autoscaling_group" "frontend" {
   }
 
   timeouts {
-    delete = "5m"
+    delete = "10m"
   }
 
   tag {
@@ -144,7 +145,7 @@ resource "aws_autoscaling_group" "frontend" {
   }
 }
 
-resource "aws_autoscaling_policy" "expense" {
+resource "aws_autoscaling_policy" "frontend" {
   name                   = "${local.resource_name}-frontend"
   policy_type            = "TargetTrackingScaling"
   autoscaling_group_name = aws_autoscaling_group.frontend.name
